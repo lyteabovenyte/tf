@@ -66,7 +66,7 @@ resource "aws_lb_listener" "http" {
         type = "fixed-response"
 
     fixed_response {
-        content_type = "plain/text"
+        content_type = "text/plain"
         message_body = "404: page not found"
         status_code = 404
     }
@@ -132,7 +132,7 @@ resource "aws_lb_listener_rule" "asg" {
 resource "aws_security_groups" "instance" {
     name = "terraform-example-instance"
 
-    ingeress {
+    ingress {
         from_port = var.server_port
         to_port = var.server_port 
         protocol = "tcp"
