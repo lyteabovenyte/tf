@@ -15,14 +15,14 @@ terraform {
 
 resource "aws_launch_configuration" "example" {
     image_id = "ami-0fb653ca2d3203ac1"
-    security_groups = [aws_security_groups.instance.id]
+    security_groups = [aws_security_group.instance.id]
     instance_type = "t2.micro"
 
-    user_data = <<-EOF
-                #!bin/bash
-                echo "Hello World" > index.html
-                nohub busybox httpd -f -p ${var.server_port} &
-                EOF
+    user_data = templatefile("user-data.sh", {
+        server_port = var.server_port
+        db_address = data.terraform_remote_state.db.outputs.address
+        db_port = data.terraform_remote_state.db.outputs.port
+    })
 
     # Required when using a launch_configuration with an auto scaling group
     lifecycle {
@@ -40,6 +40,18 @@ data "aws_subnets" "default" {
     filter {
       name = "vpc-id"
       values = [data.aws_vpc.default.id]
+    }
+}
+
+# get the web-server to read the outputs from the database's state file
+# by adding terraform_remote_state data
+data "terraform_remote_state" "db" {
+    backend = "s3"
+
+    config = {
+      bucket = "terraform-amir-ala"
+      key = "stage/data-stores/mysql/terraform.tfstate"
+      region = "us-east-2"
     }
 }
 
