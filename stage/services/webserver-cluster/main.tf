@@ -2,6 +2,17 @@ provider "aws" {
     region = "us-east-2"
 }
 
+terraform {
+  backend "s3" {
+    bucket = "terraform-amir-ala"
+    region = "us-east-2"
+    key = "stage/services/webserver-cluster/terraform.tfstate"
+
+    dynamodb_table = "terraform-amir-ala"
+    encrypt = true
+  }
+}
+
 resource "aws_launch_configuration" "example" {
     image_id = "ami-0fb653ca2d3203ac1"
     security_groups = [aws_security_groups.instance.id]
@@ -140,19 +151,5 @@ resource "aws_security_groups" "instance" {
     }
 }
 
-# use it with -var flag or export TF_VAR_server_port
-variable server_port {
-    description = "the port the server would server HTTP requests"
-    type = number
-}
 
-# replaced with "alb_dns_name"
-# output "public_id" {
-#     description = "the public_ip that the server is served on"
-#     value = aws_instance.example.public_ip
-# }
 
-output "alb_dns_name" {
-    value = aws_lb.example.dns_name
-    description = "the domain name of the load balancer"
-}
