@@ -8,6 +8,7 @@ output "asg_name" {
     description = "the name of the Auto Scaling Group"
 }
 
+# exporting the security group id for the load balancer.
 output "alb_security_group_id" {
     value = aws_security_group.alb.id
     description = "the ID of the security group attached to the load balancer"
