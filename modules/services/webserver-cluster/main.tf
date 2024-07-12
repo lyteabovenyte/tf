@@ -39,6 +39,16 @@ resource "aws_autoscaling_group" "example" {
         value = var.cluster_name
         propagate_at_launch = true
     }
+
+    dynamic "tag" {
+        for_each = var.custom_tags
+
+        content {
+            key = tag.key
+            value = tag.value
+            propagate_at_launch = true
+        }
+    }
 }
 
 resource "aws_security_group" "instance" {
@@ -151,16 +161,16 @@ resource "aws_security_group_rule" "allow_all_outbound" {
     cidr_blocks = local.all_ips
 }
  
-# should be specified in the data-source.
-data "terraform_remote_state" "db" {
-    beckend = "s3"
+# # should be specified in the data-source.
+# data "terraform_remote_state" "db" {
+#     beckend = "s3"
 
-    config = {
-        bucket = var.db_remote_state_bucket
-        key = var.db_remote_state_key
-        region = "us-east-2"
-    }
-}
+#     config = {
+#         bucket = var.db_remote_state_bucket
+#         key = var.db_remote_state_key
+#         region = "us-east-2"
+#     }
+# }
 
 data "aws_vpc" "default" {
     default = true
@@ -181,4 +191,5 @@ locals {
     tcp_protocol = "tcp"
     all_ips = ["0.0.0.0/0"]
 }
+
 

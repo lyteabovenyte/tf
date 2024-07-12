@@ -34,3 +34,11 @@ resource "aws_security_group_rule" "allow_testing_inbound" {
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
 }
+
+# creating multiple resources of aws_iam_users with for_each
+module "iam_user" {
+    source = "../../../../modules/landing-zone/iam-user"
+
+    for_each = toset(var.user_names)
+    user_names = each.value
+}

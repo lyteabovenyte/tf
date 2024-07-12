@@ -43,3 +43,20 @@ resource "aws_autoscaling_schedule" "scale_in_at_night" {
     recurrence = "0 17 * * *"
     autoscaling_group_name = module.webserver_cluster.asg_name
 }
+
+module "webserver_cluster" {
+    source = "../../../modules/services/webserver-cluster"
+
+    cluster_name = "webserver_prod"
+    db_remote_state_bucket = "amir-alaeifar"
+    db_remote_state_key = "prod/data-stores/mysql/terraform.tfstate"
+
+    instance_type = "m4.large"
+    min_size = 2
+    max_size = 10
+
+    custom_tags = {
+        Owner = "team-foo"
+        ManagedBy = "terraform" # indicating that this one shouldn't be modified manually
+    }
+}
