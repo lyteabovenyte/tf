@@ -11,6 +11,14 @@ terraform {
 
 provider "aws" {
   region = "us-east-2"
+
+  # Tags to apply to all AWS resources by default
+  default_tags {
+    tags = {
+      Owner     = "team-foo"
+      ManagedBy = "Terraform"
+    }
+  }
 }
 
 module "webserver_cluster" {
@@ -20,18 +28,15 @@ module "webserver_cluster" {
   db_remote_state_bucket = var.db_remote_state_bucket
   db_remote_state_key    = var.db_remote_state_key
 
-  instance_type        = "t2.micro"
+  instance_type        = "m4.large"
   min_size             = 2
-  max_size             = 2
-  enable_autoscaling   = false
+  max_size             = 10
+  enable_autoscaling   = true
+
+  custom_tags = {
+    Owner     = "team-foo"
+    ManagedBy = "terraform"
+  }
+
 }
 
-resource "aws_security_group_rule" "allow_testing_inbound" {
-  type              = "ingress"
-  security_group_id = module.webserver_cluster.alb_security_group_id
-
-  from_port   = 12345
-  to_port     = 12345
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-}

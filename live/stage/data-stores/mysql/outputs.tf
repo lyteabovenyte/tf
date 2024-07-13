@@ -1,10 +1,9 @@
-# output to return the database address and port
 output "address" {
-    description = "Connect to the database at this endpoint"
-    value = aws_db_instance.example.address
+  value       = aws_db_instance.example.address
+  description = "Connect to the database at this endpoint"
 }
 
 output "port" {
-    description = "the port the database is listening on"
-    value = aws_db_instance.example.port
+  value       = aws_db_instance.example.port
+  description = "The port the database is listening on"
 }
