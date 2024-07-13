@@ -55,3 +55,15 @@ variable "server_port" {
   default     = 8080
 }
 
+variable "ami" {
+    description = "the AMI to run in the cluster"
+    type = string
+    default = "ami-0fb653ca2d3203ac1"
+}
+
+variable "server_text" {
+    description = "the text the web server should return"
+    type = string
+    default = "Hello World!"
+}
+
